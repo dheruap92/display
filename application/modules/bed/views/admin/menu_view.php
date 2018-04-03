@@ -43,11 +43,12 @@
                               <tr>
                                   <th><input type="checkbox" id="check-all"></th>
                                   <th>No</th>
-                                  <th>ID</th>
                                   <th>Name</th>
                                   <th>Url</th>
                                   <th>Judul</th>
                                   <th>Parent</th>
+                                  <th>Status</th>
+                                  <th>Order</th>
                                   <th>Aksi</th>
                               </tr>
                           </thead>
@@ -55,10 +56,12 @@
                               <tr>
                                   <th><input type="checkbox" id="check-all"></th>
                                   <th>No</th>
-                                  <th>ID</th>
+                                  <th>Name</th>
+                                  <th>Url</th>
                                   <th>Judul</th>
-                                  <th>Isi menu</th>
-                                  <th>Keterangan</th>
+                                  <th>Parent</th>
+                                  <th>Status</th>
+                                  <th>Order</th>
                                   <th>Aksi</th>
                               </tr>
                           </tfoot>

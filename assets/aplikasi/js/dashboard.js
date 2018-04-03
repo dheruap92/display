@@ -34,6 +34,7 @@ $(document).ready(function(){
             success : function (data) {
                 //console.log(data);
                 $("#hasilCari").html(data);
+                load_timeline();
             },
             error : function (e) {
                 //console.log(e);
@@ -41,12 +42,10 @@ $(document).ready(function(){
         });
         //$("#hasilCari").load(base_url+"bed/admin/subkamar");
    });
-   function test() {
-        console.log("koding sedang di buat");
-   }
    $(document).bind("contextmenu",function(e){
         return false;
     });
+   load_timeline();
 });
 
 function setPetugas() {
@@ -62,6 +61,32 @@ function setPetugas() {
               //console.log(e);
           }
       });
+}
+function sendTimeline() {
+    var message = $("[name=message]").val();
+    if (message==null || message=="") {
+      return false;
+    }
+    var petugas = $("#petugasname").text();
+    $.ajax({
+        url : base_url+"bed/admin/timeline/tambah",
+        method : "POST",
+        data : {"message":message,"petugas":petugas},
+        success : function (data) {
+            load_timeline();
+        },
+        error : function (e) {
+            //console.log(e);
+        }
+    });
+}
+
+function load_timeline(id=0) {
+  console.log(id);
+  //return false;
+  $("#timeline").load(base_url+"bed/admin/timeline/"+id,function (){
+      console.log("timeline is performed");
+  });
 }
 
 

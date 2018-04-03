@@ -26,9 +26,7 @@
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu">
             <li class="header">MAIN NAVIGATION</li>
-            <?php foreach ($main_menu->result() as $menu) {
-
-            ?>
+            <?php foreach ($main_menu->result() as $menu) { ?>
             <li class="treeview">
                 <a href="#">
                     <i class="fa fa-dashboard"></i> <span><?php echo strtoupper($menu->name) ?></span> <i class="fa fa-angle-left pull-right"></i>

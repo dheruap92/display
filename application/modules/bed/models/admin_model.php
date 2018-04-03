@@ -12,9 +12,12 @@ class Admin_model extends CI_Model {
 	public function getMenu($param1="") {
 		if ($param1=="") {
 			$this->db->where('parent_id',0);
+			$this->db->where('enable',"aktif");
 		} else {
 			$this->db->where('parent_id',$param1);
+			$this->db->where('enable',"aktif");
 		}
+		$this->db->order_by("order","asc");
 		return $this->db->get("menu");
 	}
 	public function getBedById($id_kamar) {

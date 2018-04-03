@@ -18,6 +18,7 @@ class Admin extends CI_Controller {
 		$this->load->model('reservasi_model',"reservasi");
 		$this->load->model('panel_model','panel');
 		$this->load->model('activity_model','activity');
+		$this->load->model('timeline_model','timeline');
 		$this->query_menu = $this->admin->getMenu();
 		if (!$this->ion_auth->logged_in()) {
 			redirect("auth",'refresh');
@@ -31,7 +32,8 @@ class Admin extends CI_Controller {
 		$data = array(
 			'main_menu' => $this->query_menu,
 			'p'			=> 'admin/dashboard_view',
-			'paviliun'	=> $this->loadPaviliun()
+			'paviliun'	=> $this->loadPaviliun(),
+			"timeline"	=> $this->loadTimeline()
 		);
 		$this->load->view("admin_view",$data);
 	}
@@ -326,6 +328,9 @@ class Admin extends CI_Controller {
         
         	$insert = $this->menu->save($data);
         	echo json_encode(array("status" => TRUE));
+		} else if ($param1=="enable") {
+			$this->menu->enable($this->input->post('id', TRUE),$this->input->post('param', TRUE));
+        	echo json_encode(array("status" => TRUE));
 		} else if ($param1=="ubah") {
 			$data = array(
               'name'    	=> $this->input->post('name', TRUE),
@@ -354,11 +359,12 @@ class Admin extends CI_Controller {
 	            $row = array();
 	            $row[] = "<input type='checkbox' class='data-check' value='".$r->id_menu."'>";
 	            $row[] = $no;
-	            $row[] = $r->id_menu;
 	            $row[] = $r->name;
 	            $row[] = $r->url;
 	            $row[] = $r->judul;
 	            $row[] = $r->parent_name;
+	            $row[] = ($r->enable=="aktif")?'<span class="label label-success" onclick="enable('."'".$r->id_menu."'".',1)">Aktif</span>':'<span class="label label-danger" onclick="enable('."'".$r->id_menu."'".',0)">Nonaktif</span>';
+	            $row[] = $r->order;
 	            //add html for action
 	            $row[] = '<button class="btn btn-xs btn-info" data-rel="tooltip" title="Edit" onclick="update('."'".$r->id_menu."'".')"><i class="ace-icon fa fa-pencil bigger-120"></i></button>
 	                  <a class="btn btn-xs btn-danger" data-rel="tooltip" title="Hapus" onclick="hapus('."'".$r->id_menu."'".')"><i class="ace-icon fa fa-trash-o bigger-120"></i></a>';
@@ -527,6 +533,33 @@ class Admin extends CI_Controller {
 		}
 		
 	}
+
+	public function timeline($param="") {
+		if ($param=="tambah") {
+			$data = array(
+				"message" => $this->input->post('message', TRUE),
+				"user" => $this->input->post('petugas', TRUE)
+			);
+			$this->timeline->save($data);
+		} else {
+			$id = $this->uri->segment(4);
+			$data = array(
+				'data' => $this->timeline->get_all($id)
+			);
+			$this->load->view("admin/timeline_view",$data);
+		}
+	} 
+
+	public function forbidden() {
+		$data = array(
+			'main_menu' => $this->query_menu,
+			'p'			=> 'admin/forbidden_view',
+			'link1'		=> 'forbidden',
+			'link2'		=> 'forbidden',
+			'group'		=> $this->loadGroup()
+		);
+		$this->load->view("admin_view",$data);
+	}
 	public function getReservasiById() {
 		$id = $this->input->post("id");
 		$data_reservasi = $this->reservasi->getReservasiById($id);
@@ -535,9 +568,10 @@ class Admin extends CI_Controller {
 	function validate_admin() {
 		if (!$this->ion_auth->in_group('admin')) {
 			$this->session->set_flashdata('message', 'You must be an admin to view this page');
-			redirect('admin');
+			redirect('bed/admin/forbidden');
 		}
 	}
+
 
 	function loadPaviliun() {
 		$data_paviliun = $this->paviliun->getPaviliun();
@@ -557,6 +591,10 @@ class Admin extends CI_Controller {
 	function loadGroup() {
 		$data_akun = $this->akun->getGroup();
 		return $data_akun->result();
+	}
+
+	function loadTimeline() {
+
 	}
 
 	function refresh() {

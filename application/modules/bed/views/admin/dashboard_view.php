@@ -24,6 +24,9 @@
     <div class="row">
         <div class="col-lg-4 col-xs-12">
             <div class="row">
+              <div class="col-lg-12 col-lg-12" id="timeline">
+                  
+              </div>
               <div class="col-lg-12 col-lg-12">
                 <div class="alert alert-danger">
                   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>

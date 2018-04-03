@@ -175,37 +175,25 @@ function update(id)
     });
 }
 
-function bulk_delete() {
-    var list_id = [];
-    $('.data-check:checked').each(function() {
-        list_id.push(this.value);
-    });
-    if (list_id.length > 0) {
-        bootbox.confirm("Are you sure?", function(result) {
-        if(result) {
+
+function enable(id,param) {
+    bootbox.confirm("Are you sure?", function(result) {
+        if (result) {
             $.ajax({
-                url : base_url+"quote/ajax_bulk_delete/",
-                type: "POST",
-                data: {id:list_id},
-                dataType: "JSON",
-                success: function(data)
-                {
-         
-                    if(data.status) //if success close modal and reload ajax table
-                    {
-                        $('#modal_form').modal('hide');
-                        bootbox.alert("Data Berhasil Dihapus");
-                        reload_table();
-                    }
+                url : base_url+"bed/admin/menu/enable",
+                type : "POST",
+                data : {"id":id,"param":param},
+                dataType : "JSON",
+                success : function(data) {
+                    bootbox.alert("success");
+                    reload_table();
                 },
-                error: function (jqXHR, textStatus, errorThrown)
-                {
-                    bootbox.alert('Error Delete Data');
+                error : function(e) {
+                    console.log(e);
                 }
-            });
+            });   
         }
     });
-    }
 }
 
 

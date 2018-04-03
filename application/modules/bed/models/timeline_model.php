@@ -1,23 +1,47 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Menu_model extends CI_Model {
+class Timeline_model extends CI_Model {
 
-	var $table = 'menu';
-    var $column_order = array('id_menu','name','url','judul',null); //set column field database for datatable orderable
-    var $column_search = array('id_menu','name','url','judul',); //set column field database for datatable searchable just firstname , lastname , address are searchable
-    var $order = array('id_menu' => 'asc'); // default order 
+	var $table = 'timeline';
+    var $column_order = array('id','message','user','tanggal',null); //set column field database for datatable orderable
+    var $column_search = array('id','message','user','tanggal'); //set column field database for datatable searchable just firstname , lastname , address are searchable
+    var $order = array('id' => 'asc'); // default order 
     // primary key
-    var $pk = "id_menu";
+    var $pk = "id";
 	
 	public $variable;
 
 	public function __construct()
 	{
 		parent::__construct();
+        $this->load->dbforge();
+        if (!$this->db->table_exists('timeline')) {
+            $fields = array(
+                'id' => array(
+                    'type'           => "INT",
+                    'constraint'     => 5,
+                    'unsigned'       => TRUE,
+                    'auto_increment' => TRUE  
+                ),
+                'message' => array(
+                    'type'           => "VARCHAR",
+                    'constraint'     => 50 
+                ),
+                'user' => array(
+                    'type'           => "VARCHAR",
+                    'constraint'     => 20
+                )
+            );
+
+            $this->dbforge->add_field($fields);
+            $this->dbforge->add_field("'tanggal' datetime NOT NULL DEFAULT CURRENT_TIMESTAMP");
+            $this->dbforge->add_key("id");
+            $this->dbforge->create_table('timeline');
+        }
+
 	}
 	private function _get_datatables_query()
     {
-        $this->db->select("*,(select name from menu as b where b.id_menu=menu.parent_id) as parent_name");
         $this->db->from($this->table);
         $i = 0;
         foreach ($this->column_search as $item) // loop column 
@@ -73,6 +97,15 @@ class Menu_model extends CI_Model {
         $this->db->from($this->table);
         return $this->db->count_all_results();
     }
+
+    public function get_all($limit=0) {
+
+        if ($limit==0) {
+            $this->db->limit(3);
+        }
+        $this->db->order_by('id',"desc");
+        return $this->db->get($this->table);
+    }
  
     public function get_by_id($id)
     {
@@ -94,25 +127,11 @@ class Menu_model extends CI_Model {
         $this->db->update($this->table, $data, $where);
         return $this->db->affected_rows();
     }
-
-    public function enable($id,$param) {
-        if ($param) {
-            $param = "nonaktif";
-        } else {
-            $param = "aktif";
-        }
-        $this->db->update($this->table,array("enable"=>$param),array('id_menu'=>$id));
-    }
  
     public function delete_by_id($id)
     {
         $this->db->where($this->pk, $id);
         $this->db->delete($this->table);
-    }
-
-    public function getMenu() {
-        $this->db->where('parent_id',0);
-        return $this->db->get("menu");
     }
 
 }
